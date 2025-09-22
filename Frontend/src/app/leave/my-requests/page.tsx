@@ -43,7 +43,8 @@ export default function MyLeaveRequestsPage() {
   }, [user, token]);
 
   const handleCancel = (id: number) => {
-    if (!window.confirm("Are you sure you want to cancel this leave request?")) return;
+    if (!window.confirm("Are you sure you want to cancel this leave request?"))
+      return;
     setCancelingId(id);
 
     axios
@@ -55,6 +56,14 @@ export default function MyLeaveRequestsPage() {
       .finally(() => setCancelingId(null));
   };
 
+  function prettyDate(isoString: string) {
+    if (!isoString) return "";
+    return new Date(isoString).toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   const filteredRequests =
     filter === "all"
       ? requests
@@ -102,7 +111,7 @@ export default function MyLeaveRequestsPage() {
                 <tr key={req.leaveId || req.id || idx}>
                   <td>{idx + 1}</td>
                   <td>
-                    {req.startDate} — {req.endDate}
+                    {prettyDate(req.startDate)} — {prettyDate(req.endDate)}
                   </td>
                   <td>{req.reason}</td>
                   <td>
@@ -125,7 +134,9 @@ export default function MyLeaveRequestsPage() {
                       <Button
                         variant="outline-danger"
                         size="sm"
-                        disabled={cancelingId === req.leaveId || cancelingId === req.id}
+                        disabled={
+                          cancelingId === req.leaveId || cancelingId === req.id
+                        }
                         onClick={() => handleCancel(req.leaveId || req.id)}
                       >
                         {cancelingId === req.leaveId || cancelingId === req.id

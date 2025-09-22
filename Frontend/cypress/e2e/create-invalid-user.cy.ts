@@ -15,7 +15,7 @@ describe('Admin user creation validation', () => {
     cy.get('input[name="surname"]').clear().type('User');
     cy.get('select[name="roleId"]').select(1);
     cy.get('button[type="submit"]').contains(/create user/i).click();
-    cy.contains(/email.*exist|already.*used|duplicate/i).should('be.visible');
+    cy.contains(/duplicate/i).should('be.visible');
   });
 
   it('shows error for invalid user fields', () => {

@@ -4,7 +4,7 @@ describe('Logout Flow', () => {
     cy.get('input[name="email"]').type(Cypress.env('testEmail'));
     cy.get('input[name="password"]').type(Cypress.env('testPassword'));
     cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/dashboard'); // Confirm login
+    cy.url().should('include', '/dashboard'); 
   });
 
   it('should log out and redirect to login, and protect pages after logout', () => {

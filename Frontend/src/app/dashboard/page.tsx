@@ -5,7 +5,16 @@ import { useUser } from "../contexts/UserContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { Badge, Button, Card, Col, Row, ListGroup, Alert, Spinner } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Row,
+  ListGroup,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 
 const API_BASE = "http://localhost:3001/api";
 
@@ -41,20 +50,30 @@ export default function Dashboard() {
     const fetchNotifications = async () => {
       try {
         if (user.role?.name === "Manager" && user.id) {
-          const notifRes = await axios.get(`${API_BASE}/leave/getManagedOutstanding/${user.id}`, { headers });
+          const notifRes = await axios.get(
+            `${API_BASE}/leave/getManagedOutstanding/${user.id}`,
+            { headers }
+          );
           setNotifications([
             {
               id: 1,
-              message: `${notifRes.data.data ? notifRes.data.data.length : 0} leave requests need your attention`,
+              message: `${
+                notifRes.data.data ? notifRes.data.data.length : 0
+              } leave requests need your attention`,
               link: "/team/requests",
             },
           ]);
         } else if (user.role?.name === "Admin") {
-          const notifRes = await axios.get(`${API_BASE}/leave/getAllOutstanding`, { headers });
+          const notifRes = await axios.get(
+            `${API_BASE}/leave/getAllOutstanding`,
+            { headers }
+          );
           setNotifications([
             {
               id: 1,
-              message: `${notifRes.data.data ? notifRes.data.data.length : 0} leave requests need your attention`,
+              message: `${
+                notifRes.data.data ? notifRes.data.data.length : 0
+              } leave requests need your attention`,
               link: "/admin/requests",
             },
           ]);
@@ -63,7 +82,6 @@ export default function Dashboard() {
         }
       } catch (notifErr: any) {
         setNotifications([]);
-
       }
     };
 
@@ -74,10 +92,14 @@ export default function Dashboard() {
         const leaves = ownLeavesRes.data.data || [];
         setLeaveData(leaves);
 
-        setPendingRequests(leaves.filter((l: any) => l.status?.toLowerCase() === "pending").length);
+        setPendingRequests(
+          leaves.filter((l: any) => l.status?.toLowerCase() === "pending")
+            .length
+        );
 
         const sorted = [...leaves].sort(
-          (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          (a, b) =>
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         );
         setRecentActivity(sorted.slice(0, 5));
 
@@ -89,6 +111,15 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, [user, token]);
 
+  function prettyDate(isoString: string) {
+    if (!isoString) return "";
+    return new Date(isoString).toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+  
   if (userLoading || !user) return null;
 
   return (
@@ -103,11 +134,7 @@ export default function Dashboard() {
           <ul className="mb-0">
             {notifications.map((n: any) => (
               <li key={n.id}>
-                {n.link ? (
-                  <Link href={n.link}>{n.message}</Link>
-                ) : (
-                  n.message
-                )}
+                {n.link ? <Link href={n.link}>{n.message}</Link> : n.message}
               </li>
             ))}
           </ul>
@@ -115,10 +142,20 @@ export default function Dashboard() {
       )}
 
       <div className="my-3">
-        <Button as={Link} href="/leave/request" variant="primary" className="me-2">
+        <Button
+          as={Link}
+          href="/leave/request"
+          variant="primary"
+          className="me-2"
+        >
           Request Leave
         </Button>
-        <Button as={Link} href="/leave/summary" variant="outline-primary" className="me-2">
+        <Button
+          as={Link}
+          href="/leave/summary"
+          variant="outline-primary"
+          className="me-2"
+        >
           View Leave Summary
         </Button>
       </div>
@@ -138,7 +175,9 @@ export default function Dashboard() {
                 <p>
                   <strong>Remaining Leave:</strong>{" "}
                   <Badge bg="success">
-                    {remainingAl !== null ? `${remainingAl} days` : "Loading..."}
+                    {remainingAl !== null
+                      ? `${remainingAl} days`
+                      : "Loading..."}
                   </Badge>
                 </p>
                 <p>
@@ -175,10 +214,12 @@ export default function Dashboard() {
                         }
                       >
                         <strong>
-                          {a.status?.charAt(0).toUpperCase() + a.status?.slice(1)}
+                          {a.status?.charAt(0).toUpperCase() +
+                            a.status?.slice(1)}
                         </strong>
                       </span>{" "}
-                      - {a.reason} ({a.startDate} to {a.endDate})
+                      - {a.reason} ({prettyDate(a.startDate)} to{" "}
+                      {prettyDate(a.endDate)})
                     </ListGroup.Item>
                   ))
                 )}
